@@ -142,4 +142,11 @@ public class ThreadManager {
         threadsTable.refresh();
     }
 
+    void RefreshTable(){
+        ObservableList<ThreadInfo> selectedThreadsInfo = threadsTable.getItems();
+        for (int i = 0; i < getReaders().size(); i++){
+            selectedThreadsInfo.get(i).setStatus(threads.get(i).getState().name());
+        }
+    }
+
 }

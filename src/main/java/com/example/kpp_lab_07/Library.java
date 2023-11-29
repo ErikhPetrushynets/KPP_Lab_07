@@ -5,14 +5,23 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 
+import java.util.Objects;
 import java.util.concurrent.Semaphore;
 
-class Library {
+class Library{
     @FXML
     TextArea console;
-    private int totalBooks;
-    private final Semaphore semaphore = new Semaphore(1, true);
+    private volatile int totalBooks;
+    private Semaphore semaphore ;
 
+    public Object lockForLibrary;
+    public  int getTotalBooks() {
+        return totalBooks;
+    }
+
+    public void setTotalBooks(int totalBooks) {
+        this.totalBooks = totalBooks;
+    }
 
     public void setConsoleTextArea(TextArea console) {
         this.console = console;
@@ -20,28 +29,33 @@ class Library {
 
     public Library(int totalBooks) {
         this.totalBooks = totalBooks;
+        this.lockForLibrary = new Object();
+        this.semaphore = new Semaphore(totalBooks, true);
     }
 
 
     public synchronized void borrowBook(Reader reader) throws InterruptedException {
-        semaphore.acquire();
-        if (totalBooks <= 0) {
-            appendToConsole("Reader " + reader.getReaderId() + ": There are 0 available books to borrow. Will return later");
-        } else {
+        if(this.totalBooks == 0){
+            reader.setStopMe(true);
+        }
+        else {
+            semaphore.acquire();
             totalBooks--;
-            reader.setNumOfBooks(reader.getNumOfBooks() + 1);
+            reader.setNumOfBooks(1);
             appendToConsole("Reader " + reader.getReaderId() + ": Borrowed 1 book. Remaining books: " + totalBooks);
         }
-        semaphore.release();
     }
 
-    public void returnBooks(int readerId, int numOfBooks) throws InterruptedException {
-        semaphore.acquireUninterruptibly();
-        this.totalBooks += numOfBooks;
-        appendToConsole("Reader " + readerId + ": Returned " + numOfBooks +
-                " books. Remaining books: " + totalBooks);
-
-        semaphore.release();
+    public void returnBooks(Reader reader) throws InterruptedException {
+        if(reader.getNumOfBooks() != 0){
+            synchronized (this.lockForLibrary) {
+                this.totalBooks += 1;
+                reader.setNumOfBooks(0);
+                this.lockForLibrary.notify();
+            }
+            appendToConsole("Reader " + reader.getReaderId() + ": Returned 1 books. Remaining books: " + totalBooks);
+            semaphore.release();
+        }
     }
     private void appendToConsole(String text) throws InterruptedException {
         if (console.getText().length() > 8000) {
@@ -53,4 +67,8 @@ class Library {
         });
 
     }
+
+
+
+
 }

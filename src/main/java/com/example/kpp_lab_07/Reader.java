@@ -13,8 +13,10 @@ import java.util.Random;
 
 class Reader implements Runnable {
     private final Object lock = new Object();
+    boolean stopMe ;
     private final Library library;
     private final int readerId;
+    Object lockForLibrary;
     private int numOfBooks;
     private final Random random = new Random();
     ThreadManager threadManager;
@@ -26,6 +28,15 @@ class Reader implements Runnable {
         this.numOfBooks = 0;
         this.threadManager = threadManager;
         this.threadsTable = threadsTable;
+        this.stopMe = false;
+    }
+
+    public boolean isStopMe() {
+        return stopMe;
+    }
+
+    public void setStopMe(boolean stopMe) {
+        this.stopMe = stopMe;
     }
 
     public Object getLock() {
@@ -47,16 +58,15 @@ class Reader implements Runnable {
         try {
             while (true) {
                 this.StopMe();
-                if (random.nextBoolean() || this.getNumOfBooks() == 0) {
-                    library.borrowBook(this);
-                } else {
-                    int booksToReturn = random.nextInt(1, numOfBooks + 1);
-                    this.numOfBooks -= booksToReturn;
-                    library.returnBooks(readerId, booksToReturn);
-                }
+                library.borrowBook(this);
+                this.StopMeIfNoBooks();
+                threadManager.RefreshTable();
                 Thread.sleep(random.nextInt(1000, 3000));
-                //wait-notify
+                library.returnBooks(this);
+                Thread.sleep(random.nextInt(1000, 3000));
             }
+
+
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -77,7 +87,7 @@ class Reader implements Runnable {
             synchronized (this) {
                 if (Objects.equals(threadsTable.getItems().get(this.getReaderId() - 1).getStatus(), "Paused")) {
                     try {
-                        lock.wait();
+                        this.library.lockForLibrary.wait();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -85,6 +95,20 @@ class Reader implements Runnable {
             }
         }
     }
+    public void StopMeIfNoBooks() {
+                if (this.stopMe && this.getNumOfBooks() == 0) {
+                    synchronized (this.library.lockForLibrary) {
+                        this.stopMe = false;
+                        System.out.println(this.getReaderId());
+                        try {
+                            this.library.lockForLibrary.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+    }
+
 
 
 }
