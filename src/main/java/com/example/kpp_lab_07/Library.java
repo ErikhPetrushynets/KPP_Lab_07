@@ -10,9 +10,16 @@ import java.util.concurrent.Semaphore;
 class Library {
     @FXML
     TextArea console;
-    private int totalBooks;
+    private volatile int totalBooks;
     private final Semaphore semaphore = new Semaphore(1, true);
 
+    public int getTotalBooks() {
+        return totalBooks;
+    }
+
+    public void setTotalBooks(int totalBooks) {
+        this.totalBooks = totalBooks;
+    }
 
     public void setConsoleTextArea(TextArea console) {
         this.console = console;
@@ -35,12 +42,12 @@ class Library {
         semaphore.release();
     }
 
-    public void returnBooks(int readerId, int numOfBooks) throws InterruptedException {
+    public synchronized void returnBooks(int readerId, int numOfBooks) throws InterruptedException {
         semaphore.acquireUninterruptibly();
         this.totalBooks += numOfBooks;
         appendToConsole("Reader " + readerId + ": Returned " + numOfBooks +
                 " books. Remaining books: " + totalBooks);
-
+        this.notify();
         semaphore.release();
     }
     private void appendToConsole(String text) throws InterruptedException {

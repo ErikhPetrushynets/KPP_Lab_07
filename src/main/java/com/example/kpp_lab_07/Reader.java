@@ -47,6 +47,7 @@ class Reader implements Runnable {
         try {
             while (true) {
                 this.StopMe();
+                this.StopBooks();
                 if (random.nextBoolean() || this.getNumOfBooks() == 0) {
                     library.borrowBook(this);
                 } else {
@@ -86,5 +87,16 @@ class Reader implements Runnable {
         }
     }
 
-
+    public void StopBooks() {
+        if (library.getTotalBooks() == 0 && this.getNumOfBooks() == 0) {
+            synchronized (library) {
+                try {
+                    System.out.println("Stopping: " + this.readerId);
+                    library.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }
