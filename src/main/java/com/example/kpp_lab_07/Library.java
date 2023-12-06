@@ -2,16 +2,19 @@ package com.example.kpp_lab_07;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 
 import java.util.concurrent.Semaphore;
 
 class Library {
+    private final Semaphore semaphore = new Semaphore(1, true);
     @FXML
     TextArea console;
     private volatile int totalBooks;
-    private final Semaphore semaphore = new Semaphore(1, true);
+
+    public Library(int totalBooks) {
+        this.totalBooks = totalBooks;
+    }
 
     public int getTotalBooks() {
         return totalBooks;
@@ -21,36 +24,39 @@ class Library {
         this.totalBooks = totalBooks;
     }
 
+    public Semaphore getSemaphore() {
+        return semaphore;
+    }
+
     public void setConsoleTextArea(TextArea console) {
         this.console = console;
     }
 
-    public Library(int totalBooks) {
-        this.totalBooks = totalBooks;
-    }
-
-
     public synchronized void borrowBook(Reader reader) throws InterruptedException {
-        semaphore.acquire();
-        if (totalBooks <= 0) {
-            appendToConsole("Reader " + reader.getReaderId() + ": There are 0 available books to borrow. Will return later");
-        } else {
-            totalBooks--;
-            reader.setNumOfBooks(reader.getNumOfBooks() + 1);
-            appendToConsole("Reader " + reader.getReaderId() + ": Borrowed 1 book. Remaining books: " + totalBooks);
+        try {
+            semaphore.acquire();
+            if (totalBooks > 0) {
+                totalBooks--;
+                reader.setNumOfBooks(reader.getNumOfBooks() + 1);
+                appendToConsole("Reader " + reader.getReaderId() + ": Borrowed 1 book. Remaining books: " + totalBooks);
+            }
+        } finally {
+            semaphore.release();
         }
-        semaphore.release();
     }
 
     public synchronized void returnBooks(int readerId, int numOfBooks) throws InterruptedException {
-        semaphore.acquireUninterruptibly();
-        this.totalBooks += numOfBooks;
-        appendToConsole("Reader " + readerId + ": Returned " + numOfBooks +
-                " books. Remaining books: " + totalBooks);
-        this.notify();
-        semaphore.release();
+        try {
+            semaphore.acquire();
+            this.totalBooks += numOfBooks;
+            this.notify();
+            appendToConsole("Reader " + readerId + ": Returned " + numOfBooks + " books. Remaining books: " + totalBooks);
+        } finally {
+            semaphore.release();
+        }
     }
-    private void appendToConsole(String text) throws InterruptedException {
+
+    private synchronized void appendToConsole(String text) throws InterruptedException {
         if (console.getText().length() > 8000) {
             String newText = console.getText().substring(console.getText().length() - 4000);
             console.setText(newText);
@@ -58,6 +64,5 @@ class Library {
         Platform.runLater(() -> {
             console.appendText(text + "\n");
         });
-
     }
 }

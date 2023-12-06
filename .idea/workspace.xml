@@ -4,11 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60673377-ef49-4e36-a851-ea068eeb092c" name="Changes" comment="feat: Version 2 trying.">
+    <list default="true" id="60673377-ef49-4e36-a851-ea068eeb092c" name="Changes" comment="feat: Added wait notify if books = 0.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/kpp_lab_07/HelloApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/kpp_lab_07/HelloApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/kpp_lab_07/HelloController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/kpp_lab_07/HelloController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/kpp_lab_07/Library.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/kpp_lab_07/Library.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/example/kpp_lab_07/Reader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/kpp_lab_07/Reader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/kpp_lab_07/ThreadInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/kpp_lab_07/ThreadInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/kpp_lab_07/ThreadManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/kpp_lab_07/ThreadManager.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,6 +72,11 @@
       <workItem from="1701177446987" duration="25918000" />
       <workItem from="1701263868641" duration="2696000" />
       <workItem from="1701295579667" duration="607000" />
+      <workItem from="1701339746379" duration="1876000" />
+      <workItem from="1701375325586" duration="32000" />
+      <workItem from="1701788357830" duration="1483000" />
+      <workItem from="1701806322278" duration="1424000" />
+      <workItem from="1701813885229" duration="4617000" />
     </task>
     <servers />
   </component>

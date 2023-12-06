@@ -1,17 +1,11 @@
 package com.example.kpp_lab_07;
 
-import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import org.w3c.dom.Text;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class HelloController {
+    ThreadManager threadManager;
     @FXML
     private TextArea console;
     @FXML
@@ -28,7 +22,6 @@ public class HelloController {
     private TableColumn statusColumn;
     @FXML
     private TableColumn changeTimeColumn;
-    ThreadManager threadManager;
 
     @FXML
     protected void StartThreads() {
@@ -37,8 +30,8 @@ public class HelloController {
         library.setConsoleTextArea(console);
 
         if (threadManager != null) {
-            for (var thread: threadManager.getThreads()) {
-                if(!thread.isInterrupted()) thread.interrupt();
+            for (var thread : threadManager.getThreads()) {
+                if (!thread.isInterrupted()) thread.interrupt();
             }
             console.clear();
         }
@@ -46,20 +39,24 @@ public class HelloController {
         threadManager = new ThreadManager(Integer.valueOf(inputNumOfThreads.getText()), library, this.threadsTable);
 
     }
+
     @FXML
     protected void KillSelectedThread() throws InterruptedException {
         threadManager.KillSelectedThread();
     }
+
     @FXML
     public void ResumeSelectedThread() throws InterruptedException {
-       threadManager.ResumeSelectedThread();
+        threadManager.ResumeSelectedThread();
     }
+
     @FXML
     public void SuspendSelectedThread() throws InterruptedException {
         threadManager.SuspendSelectedThread();
     }
+
     @FXML
-    public void initialize(){
+    public void initialize() {
         nameColumn.setCellValueFactory(new PropertyValueFactory<ThreadInfo, String>("name"));
         priorityColumn.setCellValueFactory(new PropertyValueFactory<ThreadInfo, String>("priority"));
         statusColumn.setCellValueFactory(new PropertyValueFactory<ThreadInfo, String>("status"));

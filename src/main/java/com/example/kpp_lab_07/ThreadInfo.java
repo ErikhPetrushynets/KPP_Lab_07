@@ -20,10 +20,6 @@ public class ThreadInfo {
         return name.get();
     }
 
-    public SimpleStringProperty nameProperty() {
-        return name;
-    }
-
     public void setName(String name) {
         this.name.set(name);
     }
@@ -32,35 +28,35 @@ public class ThreadInfo {
         return status.get();
     }
 
-    public SimpleStringProperty statusProperty() {
-        return status;
-    }
-
     public void setStatus(String status) {
         this.status.set(status);
+    }
+
+    public void setLastStatusChangeTime(String lastStatusChangeTime) {
+        this.lastStatusChangeTime.set(lastStatusChangeTime);
+    }
+
+    public SimpleStringProperty nameProperty() {
+        return name;
+    }
+
+    public SimpleStringProperty statusProperty() {
+        return status;
     }
 
     public int getPriority() {
         return priority.get();
     }
 
-    public SimpleIntegerProperty priorityProperty() {
-        return priority;
-    }
-
     public void setPriority(int priority) {
         this.priority.set(priority);
     }
 
-    public String getLastStatusChangeTime() {
-        return lastStatusChangeTime.get();
+    public SimpleIntegerProperty priorityProperty() {
+        return priority;
     }
 
     public SimpleStringProperty lastStatusChangeTimeProperty() {
         return lastStatusChangeTime;
-    }
-
-    public void setLastStatusChangeTime(String lastStatusChangeTime) {
-        this.lastStatusChangeTime.set(lastStatusChangeTime);
     }
 }
